@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Librería Aurora — Catálogo, libros, clientes, ventas e historial</title>
+  <meta name="description" content="Etapa 1 (estructura HTML) del frontend de una librería: cinco vistas navegables, sin estilos ni comportamientos.">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="saltar-al-contenido" href="#catalogo">Saltar al contenido principal</a>
+
+  <header class="cabecera">
+    <div class="cabecera__marca">
+      <h1 class="cabecera__titulo">Librería Aurora</h1>
+      <p class="cabecera__lema">Catálogo, ventas e historial de una librería</p>
+    </div>
+    <nav class="navegacion" aria-label="Navegación principal entre vistas">
+      <ul class="navegacion__lista">
+        <li><a class="navegacion__enlace" href="#catalogo">Catálogo</a></li>
+        <li><a class="navegacion__enlace" href="#libros">Libros</a></li>
+        <li><a class="navegacion__enlace" href="#clientes">Clientes</a></li>
+        <li><a class="navegacion__enlace" href="#ventas">Ventas</a></li>
+        <li><a class="navegacion__enlace" href="#historial">Historial</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <p class="aviso-maqueta" id="aviso-etapa" role="note">
+    <strong>Etapa 1 — solo estructura HTML.</strong>
+    Las cinco vistas están construidas, pero <strong>ninguna operación funciona todavía</strong>:
+    las altas de libros y clientes, la venta y el historial son pendientes de la etapa 2.
+    El filtro por título del catálogo todavía no está implementado. No hay estilos ni JavaScript en esta etapa.
+  </p>
+
+  <main class="contenido">
+
+    <noscript>
+      <p class="aviso-maqueta">
+        <strong>Etapa 1 — solo estructura HTML.</strong>
+        Las cinco vistas están construidas, pero los listados vacíos y los formularios sin comportamiento
+        se completan en la etapa 2, que agrega los estilos y el JavaScript.
+      </p>
+    </noscript>
+
+    <!-- ============ CATÁLOGO ============ -->
+    <section id="catalogo" class="vista" aria-labelledby="titulo-catalogo">
+      <h2 id="titulo-catalogo" class="vista__titulo">Catálogo de libros</h2>
+
+      <form id="formulario-busqueda" class="formulario formulario--busqueda" novalidate>
+        <div class="campo">
+          <label class="campo__etiqueta" for="busqueda-titulo">Buscar por título</label>
+          <input class="campo__control" type="search" id="busqueda-titulo" name="busqueda"
+                 autocomplete="off">
+        </div>
+        <!-- ENGANCHE ETAPA 2: preventDefault en el submit y filtro por título (trim, sin distinguir mayúsculas, subcadena). -->
+        <button class="boton boton--principal" type="submit" id="boton-buscar">Buscar por título</button>
+        <button class="boton boton--secundario" type="reset" id="boton-limpiar-busqueda">Limpiar búsqueda</button>
+      </form>
+
+      <!-- ENGANCHE ETAPA 2: ocultar estos contenedores al insertar filas y mostrarlos al quitar la última. -->
+      <div class="mensaje mensaje--vacio" id="mensaje-catalogo-vacio">
+        <p class="mensaje__texto">Todavía no hay libros en el catálogo. Los registros se cargan en la etapa 2.</p>
+      </div>
+
+      <div class="mensaje mensaje--alerta" id="mensaje-sin-resultados">
+        <p class="mensaje__texto">No se encontraron libros que coincidan con la búsqueda. Probá con otro título o limpiá la búsqueda.</p>
+      </div>
+
+      <!-- ENGANCHE ETAPA 2: aquí se renderizan los libros desde el array local; cada libro muestra título, ISBN, editorial, género, autores y precio, o el literal "Sin clasificar" si no tiene género. -->
+      <ul class="catalogo" id="lista-catalogo"></ul>
+    </section>
+
+    <!-- ============ LIBROS ============ -->
+    <section id="libros" class="vista" aria-labelledby="titulo-libros">
+      <h2 id="titulo-libros" class="vista__titulo">Libros</h2>
+      <p class="vista__descripcion">
+        Alta de libros y listado de libros registrados. Estructura preparada; el alta todavía no funciona.
+      </p>
+
+      <div class="rejilla-dos-columnas">
+        <form class="formulario" id="formulario-alta-libro" novalidate>
+          <h3 class="formulario__titulo">Registrar un libro</h3>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-titulo">Título</label>
+            <input class="campo__control" type="text" id="libro-titulo" name="titulo" autocomplete="off">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-isbn">ISBN</label>
+            <input class="campo__control" type="text" id="libro-isbn" name="isbn" autocomplete="off">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-precio">Precio</label>
+            <input class="campo__control" type="number" id="libro-precio" name="precio" min="0" step="0.01" inputmode="decimal">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-editorial">Editorial</label>
+            <!-- ENGANCHE ETAPA 2: poblar con las editoriales del modelo local, usando su id estable como value. -->
+            <select class="campo__control" id="libro-editorial" name="editorial">
+              <option value="">Elegí una editorial</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-genero">Género</label>
+            <!-- ENGANCHE ETAPA 2: agregar los géneros existentes después de "Sin clasificar", que representa la ausencia de género. -->
+            <select class="campo__control" id="libro-genero" name="genero">
+              <option value="">Sin clasificar</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-autores">Autores (seleccioná uno o varios)</label>
+            <!-- ENGANCHE ETAPA 2: poblar con los autores del modelo local; se leen con selectedOptions. -->
+            <select class="campo__control campo__control--multiple" id="libro-autores" name="autores" multiple size="4"></select>
+            <p class="campo__ayuda">Con el teclado se alcanza con Ctrl + flechas para marcar más de un autor.</p>
+          </div>
+
+          <div class="formulario__acciones">
+            <!-- ENGANCHE ETAPA 2: preventDefault, validaciones (ISBN único normalizado, precio > 0, al menos un autor) y alta en el array local. -->
+            <button class="boton boton--principal" type="submit" id="boton-agregar-libro">Agregar libro</button>
+          </div>
+
+          <!-- ENGANCHE ETAPA 2: mostrar uno u otro según el resultado del alta. -->
+          <div class="mensaje mensaje--exito" id="mensaje-exito-libro" hidden>
+            <p class="mensaje__texto">Operación correcta: el libro se registró en el listado.</p>
+          </div>
+          <div class="mensaje mensaje--error" id="mensaje-error-libro" hidden>
+            <p class="mensaje__texto">Operación rechazada: revisá los campos marcados. En la etapa 2 se informará el motivo exacto de cada error.</p>
+          </div>
+        </form>
+
+        <div class="tarjeta">
+          <h3 class="tarjeta__titulo">Libros registrados</h3>
+          <div class="tabla-envoltura">
+            <table class="tabla" id="tabla-libros">
+              <caption class="tabla__leyenda">Libros registrados</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Título</th>
+                  <th scope="col">ISBN</th>
+                  <th scope="col">Editorial</th>
+                  <th scope="col">Género</th>
+                  <th scope="col">Autores</th>
+                  <th scope="col">Precio</th>
+                </tr>
+              </thead>
+              <!-- ENGANCHE ETAPA 2: cuerpo.replaceChildren(...) con una fila por libro. -->
+              <tbody id="cuerpo-libros"></tbody>
+            </table>
+          </div>
+          <!-- ENGANCHE ETAPA 2: ocultar cuando haya al menos un libro. -->
+          <div class="mensaje mensaje--vacio" id="mensaje-libros-vacio">
+            <p class="mensaje__texto">Todavía no hay libros registrados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CLIENTES ============ -->
+    <section id="clientes" class="vista" aria-labelledby="titulo-clientes">
+      <h2 id="titulo-clientes" class="vista__titulo">Clientes</h2>
+      <p class="vista__descripcion">
+        Alta de clientes y listado de clientes registrados. Estructura preparada; el alta todavía no funciona.
+      </p>
+
+      <div class="rejilla-dos-columnas">
+        <form class="formulario" id="formulario-alta-cliente" novalidate>
+          <h3 class="formulario__titulo">Registrar un cliente</h3>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="cliente-nombre">Nombre completo</label>
+            <input class="campo__control" type="text" id="cliente-nombre" name="nombre" autocomplete="off">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="cliente-email">Correo electrónico</label>
+            <input class="campo__control" type="email" id="cliente-email" name="email" autocomplete="off">
+          </div>
+
+          <div class="formulario__acciones">
+            <!-- ENGANCHE ETAPA 2: preventDefault, validaciones (nombre no vacío, email con formato válido y único con trim + toLowerCase) y alta en el array local. -->
+            <button class="boton boton--principal" type="submit" id="boton-agregar-cliente">Agregar cliente</button>
+          </div>
+
+          <!-- ENGANCHE ETAPA 2: mostrar uno u otro según el resultado del alta. -->
+          <div class="mensaje mensaje--exito" id="mensaje-exito-cliente" hidden>
+            <p class="mensaje__texto">Operación correcta: el cliente se registró en el listado.</p>
+          </div>
+          <div class="mensaje mensaje--error" id="mensaje-error-cliente" hidden>
+            <p class="mensaje__texto">Operación rechazada: revisá los campos marcados. En la etapa 2 se informará el motivo exacto de cada error.</p>
+          </div>
+        </form>
+
+        <div class="tarjeta">
+          <h3 class="tarjeta__titulo">Clientes registrados</h3>
+          <div class="tabla-envoltura">
+            <table class="tabla" id="tabla-clientes">
+              <caption class="tabla__leyenda">Clientes registrados</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Nombre completo</th>
+                  <th scope="col">Correo electrónico</th>
+                </tr>
+              </thead>
+              <!-- ENGANCHE ETAPA 2: cuerpo.replaceChildren(...) con una fila por cliente. -->
+              <tbody id="cuerpo-clientes"></tbody>
+            </table>
+          </div>
+          <!-- ENGANCHE ETAPA 2: ocultar cuando haya al menos un cliente. -->
+          <div class="mensaje mensaje--vacio" id="mensaje-clientes-vacio">
+            <p class="mensaje__texto">Todavía no hay clientes registrados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VENTAS ============ -->
+    <section id="ventas" class="vista" aria-labelledby="titulo-ventas">
+      <h2 id="titulo-ventas" class="vista__titulo">Ventas</h2>
+      <p class="vista__descripcion">
+        Composición de una venta con cliente, renglones y resumen. Estructura preparada; la venta todavía no funciona.
+      </p>
+
+      <form class="formulario" id="formulario-venta" novalidate>
+        <h3 class="formulario__titulo">Datos de la venta</h3>
+
+        <div class="campo">
+          <label class="campo__etiqueta" for="venta-cliente">Cliente</label>
+          <!-- ENGANCHE ETAPA 2: poblar con los clientes del modelo local, usando su id estable como value. -->
+          <select class="campo__control" id="venta-cliente" name="cliente">
+            <option value="">Elegí un cliente</option>
+          </select>
+        </div>
+
+        <div class="formulario__acciones formulario__acciones--fila">
+          <div class="campo campo--en-linea">
+            <label class="campo__etiqueta" for="venta-libro">Libro</label>
+            <!-- ENGANCHE ETAPA 2: poblar con los libros del modelo local; se muestran título y precio. -->
+            <select class="campo__control" id="venta-libro" name="libro">
+              <option value="">Elegí un libro</option>
+            </select>
+          </div>
+
+          <div class="campo campo--en-linea">
+            <label class="campo__etiqueta" for="venta-cantidad">Cantidad</label>
+            <input class="campo__control" type="number" id="venta-cantidad" name="cantidad" min="1" step="1">
+          </div>
+
+          <!-- ENGANCHE ETAPA 2: agregar el renglón, rechazando libros repetidos dentro de la misma venta. -->
+          <button class="boton boton--secundario" type="button" id="boton-agregar-renglon">Agregar renglón</button>
+        </div>
+
+        <div class="tabla-envoltura">
+          <table class="tabla" id="tabla-renglones">
+            <caption class="tabla__leyenda">Renglones de la venta en curso</caption>
+            <thead>
+              <tr>
+                <th scope="col">Libro</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Precio unitario</th>
+                <th scope="col">Subtotal</th>
+              </tr>
+            </thead>
+            <!-- ENGANCHE ETAPA 2: cuerpo.replaceChildren(...) con una fila por renglón; subtotal = cantidad × precio. -->
+            <tbody id="cuerpo-renglones"></tbody>
+            <tfoot>
+              <tr>
+                <th scope="row" colspan="3">Total de la venta</th>
+                <td class="tabla__total" id="total-venta">$ 0,00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <!-- ENGANCHE ETAPA 2: ocultar cuando haya al menos un renglón. -->
+        <div class="mensaje mensaje--vacio" id="mensaje-renglones-vacio">
+          <p class="mensaje__texto">Todavía no agregaste renglones a la venta.</p>
+        </div>
+
+        <div class="formulario__acciones">
+          <!-- ENGANCHE ETAPA 2: copiar el precio unitario al renglón y registrar la venta en el historial. -->
+          <button class="boton boton--principal" type="button" id="boton-confirmar-venta">Confirmar venta</button>
+        </div>
+
+        <!-- ENGANCHE ETAPA 2: mostrar uno u otro según el resultado de la confirmación. -->
+        <div class="mensaje mensaje--exito" id="mensaje-exito-venta" hidden>
+          <p class="mensaje__texto">Operación correcta: la venta se confirmó y quedó registrada en el historial.</p>
+        </div>
+        <div class="mensaje mensaje--error" id="mensaje-error-venta" hidden>
+          <p class="mensaje__texto">Operación rechazada: falta elegir el cliente, la venta no tiene renglones o hay cantidades inválidas. En la etapa 2 se informará el motivo exacto.</p>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ HISTORIAL ============ -->
+    <section id="historial" class="vista" aria-labelledby="titulo-historial">
+      <h2 id="titulo-historial" class="vista__titulo">Historial de ventas</h2>
+      <p class="vista__descripcion">
+        Listado de ventas confirmadas y consulta del detalle de cada una. Estructura preparada; el historial todavía no funciona.
+      </p>
+
+      <div class="tarjeta">
+        <h3 class="tarjeta__titulo">Ventas registradas</h3>
+        <div class="tabla-envoltura">
+          <table class="tabla" id="tabla-ventas">
+            <caption class="tabla__leyenda">Ventas registradas</caption>
+            <thead>
+              <tr>
+                <th scope="col">Identificador</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Total</th>
+                <th scope="col">Detalle</th>
+              </tr>
+            </thead>
+            <!-- ENGANCHE ETAPA 2: cuerpo.replaceChildren(...) con una fila por venta y su botón de detalle. -->
+            <tbody id="cuerpo-ventas"></tbody>
+          </table>
+        </div>
+        <!-- ENGANCHE ETAPA 2: ocultar cuando haya al menos una venta. -->
+        <div class="mensaje mensaje--vacio" id="mensaje-historial-vacio">
+          <p class="mensaje__texto">Todavía no hay ventas registradas en el historial.</p>
+        </div>
+      </div>
+
+      <details class="detalle-venta" id="detalle-venta">
+        <summary class="detalle-venta__resumen" id="detalle-venta-resumen">Detalle de la venta seleccionada</summary>
+        <div class="tabla-envoltura">
+          <table class="tabla" id="tabla-detalle-venta">
+            <caption class="tabla__leyenda">Renglones de la venta seleccionada</caption>
+            <thead>
+              <tr>
+                <th scope="col">Libro</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Precio unitario</th>
+                <th scope="col">Subtotal</th>
+              </tr>
+            </thead>
+            <!-- ENGANCHE ETAPA 2: leer los renglones ya guardados en la venta; nunca releer el precio del catálogo. -->
+            <tbody id="cuerpo-detalle-venta"></tbody>
+            <tfoot>
+              <tr>
+                <th scope="row" colspan="3">Total de la venta</th>
+                <td class="tabla__total" id="detalle-venta-total">$ 0,00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="detalle-venta__nota">
+          En la etapa 2 el precio unitario queda copiado en el renglón al confirmar la venta, de modo que
+          cambiar después el precio del catálogo no altera este detalle.
+        </p>
+      </details>
+    </section>
+
+  </main>
+
+  <footer class="pie">
+    <p class="pie__texto">Etapa 1 — Librería Aurora. Entrega de estructura HTML: sin estilos, sin JavaScript y sin datos. Los datos iniciales, los estilos y los comportamientos se agregan en la etapa 2.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Este proyecto no usa npm ni dependencias: el alcance técnico lo prohíbe.
+# Las reglas siguientes son solo una defensa por si se instalan sin querer.
+
+node_modules/
+package-lock.json
+package.json
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
