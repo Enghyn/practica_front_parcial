@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Librería Aurora — Catálogo, libros, clientes, ventas e historial</title>
-  <meta name="description" content="Etapa 1 (estructura HTML) del frontend de una librería: cinco vistas navegables, sin estilos ni comportamientos.">
+  <meta name="description" content="Frontend de una librería en HTML, CSS y JavaScript nativos: catálogo con filtro por título, altas de libros y clientes, y vistas de venta e historial.">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
@@ -27,19 +27,21 @@
   </header>
 
   <p class="aviso-maqueta" id="aviso-etapa" role="note">
-    <strong>Etapa 1 — solo estructura HTML.</strong>
-    Las cinco vistas están construidas, pero <strong>ninguna operación funciona todavía</strong>:
-    las altas de libros y clientes, la venta y el historial son pendientes de la etapa 2.
-    El filtro por título del catálogo todavía no está implementado. No hay estilos ni JavaScript en esta etapa.
+    <strong>Estado real de la implementación.</strong>
+    El <strong>Ejercicio 3 (datos locales, catálogo renderizado y filtro por título)</strong> y el
+    <strong>Ejercicio 4 (altas de libros y clientes con validaciones)</strong> están operativos.
+    Siguen pendientes la <strong>venta simulada con su historial (Ejercicio 5)</strong> y la
+    <strong>persistencia con localStorage (Ejercicio 6)</strong>.
   </p>
 
   <main class="contenido">
 
     <noscript>
       <p class="aviso-maqueta">
-        <strong>Etapa 1 — solo estructura HTML.</strong>
-        Las cinco vistas están construidas, pero los listados vacíos y los formularios sin comportamiento
-        se completan en la etapa 2, que agrega los estilos y el JavaScript.
+        <strong>Este proyecto necesita JavaScript.</strong>
+        Los listados del catálogo, los formularios con comportamiento y sus validaciones se generan
+        con JavaScript: sin él solo se ve la estructura de las cinco vistas.
+        La venta, el historial y la persistencia de datos todavía son pendientes.
       </p>
     </noscript>
 
@@ -75,7 +77,8 @@
     <section id="libros" class="vista" aria-labelledby="titulo-libros">
       <h2 id="titulo-libros" class="vista__titulo">Libros</h2>
       <p class="vista__descripcion">
-        Alta de libros y listado de libros registrados. Estructura preparada; el alta todavía no funciona.
+        Alta de libros con validaciones (título, ISBN único, precio mayor que cero, editorial existente
+        y al menos un autor) y listado de libros registrados que se actualiza en vivo, sin recargar la página.
       </p>
 
       <div class="rejilla-dos-columnas">
@@ -130,7 +133,7 @@
             <p class="mensaje__texto">Operación correcta: el libro se registró en el listado.</p>
           </div>
           <div class="mensaje mensaje--error" id="mensaje-error-libro" hidden>
-            <p class="mensaje__texto">Operación rechazada: revisá los campos marcados. En la etapa 2 se informará el motivo exacto de cada error.</p>
+            <p class="mensaje__texto">Operación rechazada: revisá los campos marcados. El motivo específico de cada error se informa junto al campo correspondiente.</p>
           </div>
         </form>
 
@@ -165,7 +168,8 @@
     <section id="clientes" class="vista" aria-labelledby="titulo-clientes">
       <h2 id="titulo-clientes" class="vista__titulo">Clientes</h2>
       <p class="vista__descripcion">
-        Alta de clientes y listado de clientes registrados. Estructura preparada; el alta todavía no funciona.
+        Alta de clientes con validaciones (nombre completo, email con formato válido y no duplicado)
+        y listado de clientes registrados que se actualiza en vivo, sin recargar la página.
       </p>
 
       <div class="rejilla-dos-columnas">
@@ -192,7 +196,7 @@
             <p class="mensaje__texto">Operación correcta: el cliente se registró en el listado.</p>
           </div>
           <div class="mensaje mensaje--error" id="mensaje-error-cliente" hidden>
-            <p class="mensaje__texto">Operación rechazada: revisá los campos marcados. En la etapa 2 se informará el motivo exacto de cada error.</p>
+            <p class="mensaje__texto">Operación rechazada: revisá los campos marcados. El motivo específico de cada error se informa junto al campo correspondiente.</p>
           </div>
         </form>
 
@@ -360,7 +364,10 @@
   </main>
 
   <footer class="pie">
-    <p class="pie__texto">Etapa 1 — Librería Aurora. Entrega de estructura HTML: sin estilos, sin JavaScript y sin datos. Los datos iniciales, los estilos y los comportamientos se agregan en la etapa 2.</p>
+    <p class="pie__texto">Librería Aurora — TPI de Programación III. Frontend en HTML, CSS y JavaScript nativos: catálogo con filtro y altas de libros y clientes operativos; venta, historial y persistencia, pendientes.</p>
   </footer>
+  <script src="js/datos.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/altas.js"></script>
 </body>
 </html>

@@ -84,10 +84,19 @@
   }
 
   function aplicarFiltro() {
+    editorialesPorId = new Map(datos.editoriales.map(function (e) { return [e.id, e.nombre]; }));
+    generosPorId = new Map(datos.generos.map(function (g) { return [g.id, g.nombre]; }));
+    autoresPorId = new Map(datos.autores.map(function (a) { return [a.id, a.nombre]; }));
+
     var filtrados = filtrarPorTitulo(datos.libros, campoBusqueda.value);
     renderizarCatalogo(filtrados);
     actualizarMensajes(filtrados.length, datos.libros.length);
   }
+
+  // Escuchar actualizaciones de datos locales
+  document.addEventListener('libreria:datos-actualizados', function () {
+    aplicarFiltro();
+  });
 
   // Submit: filtra sin recargar la página.
   formulario.addEventListener('submit', function (evento) {
