@@ -37,6 +37,10 @@ La entrega separa estructura, estilos y comportamiento en archivos propios:
   (trim, sin distinguir mayúsculas, coincidencias parciales).
 - `js/altas.js` — altas de libros y clientes con `preventDefault`, validaciones y actualización en
   vivo de listados y selectores relacionados.
+- `js/ventas.js` — composición de la venta (renglones sin libros repetidos, cantidades enteras
+  mayores que cero, edición de cantidades y quitar renglones antes de confirmar), validaciones al
+  confirmar, registro en el historial **copiando el precio unitario al renglón** y detalle
+  inmutable que nunca relee el catálogo.
 
 `index.html` incluye:
 
@@ -61,25 +65,21 @@ Según `AGENTS.md` §9.2.9 y §9.3, se declara expresamente el estado real de la
 | Navegación por anclas y enlace de salto | **Funciona** (HTML puro). |
 | Catálogo y filtro por título | **Funciona** (renderizado dinámico y actualización al agregar libros). |
 | Formularios de alta de libros y clientes (Ejercicio 4) | **Funciona**: validación completa, prevención de duplicados (ISBN y email), selectores dinámicos, mensajes de éxito/error y actualización en vivo de listados y selectores sin recargar la página. |
-| Composición y confirmación de la venta | Pendiente (Ejercicio 5). |
-| Historial de ventas y detalle | Pendiente (Ejercicio 5). |
+| Composición y confirmación de la venta (Ejercicio 5) | **Funciona**: renglones con cantidad entera > 0, sin libros repetidos, edición y quitado de renglones, subtotales y total con dos decimales, y validaciones al confirmar. |
+| Historial de ventas y detalle (Ejercicio 5) | **Funciona**: listado con id, fecha, cliente y total; el detalle se arma solo con los datos guardados en la venta (precio unitario copiado al confirmar), no con el catálogo actual. |
 | Persistencia de datos en `localStorage` | Pendiente (Ejercicio 6). |
 
-**Casos manuales de la §10:** los casos 2 y 3 se ejecutaron y sus resultados observados figuran en
-la §8. Los casos restantes no se registraron en esta actualización (los casos 4, 5, 6 y 7 dependen
-además de los Ejercicios 5 y 6). Según `AGENTS.md` §9.3, ninguna prueba se da por aprobada sin
-haberse ejecutado y registrado.
+**Casos manuales de la §10:** los casos 2, 3, 4 y 5 se ejecutaron y sus resultados observados
+figuran en la §8. Los casos restantes (1, 6, 7 y 8) no se registraron en esta actualización; el
+caso 6 depende además del Ejercicio 6 (`localStorage`). Según `AGENTS.md` §9.3, ninguna prueba se
+da por aprobada sin haberse ejecutado y registrado.
 
 ## 5. Lo que todavía no funciona (pendientes)
 
-- **Venta simulada** (Ejercicio 5): selección de cliente, renglones sin libros repetidos dentro de
-  la misma venta, cálculos de subtotal y total con dos decimales y confirmación que copia el precio
-  unitario al renglón.
-- **Historial** (Ejercicio 5): listado de ventas, detalle de renglones e inmutabilidad del precio
-  histórico frente a cambios posteriores del catálogo.
 - **Persistencia** (Ejercicio 6): guardar libros, clientes y ventas en `localStorage`, con clave de
   versión para no duplicar los datos sembrados al reabrir.
-- **Casos manuales de la §10 aún no registrados**: 1, 4, 5, 6, 7 y 8 (ver §8).
+- **Casos manuales de la §10 aún no registrados**: 1, 6, 7 y 8 (ver §8). El caso 6 (precio
+  histórico alterando el catálogo guardado en `localStorage`) depende del Ejercicio 6.
 
 ## 6. Alcance técnico
 
@@ -95,6 +95,7 @@ css/estilos.css       ← estilos propios (sin librerías ni CDN)
 js/datos.js           ← datos locales y siembra inicial
 js/catalogo.js        ← renderizado y filtro del catálogo
 js/altas.js           ← altas de libros y clientes con validaciones
+js/ventas.js          ← venta simulada, historial inmutable y detalle
 README.md             ← este archivo
 AGENTS.md             ← reglas del proyecto
 docs/                 ← consigna oficial en PDF
@@ -105,10 +106,11 @@ No hay imágenes propias ni de terceros, así que no hay procedencia que acredit
 
 ## 8. Casos manuales ejecutados (§10 de la consigna)
 
-Ejecutados el 19/10/2026 sobre el archivo local `index.html` en un navegador real (Chrome 155,
-sin interfaz gráfica, controlado por el protocolo de DevTools): se cargó la página, se completaron
-los campos de cada formulario y se disparó el envío real del formulario. Se anota lo observado en
-cada paso, coincidente o no con lo esperado (`AGENTS.md` §9.3).
+Ejecutados sobre el archivo local `index.html` en un navegador real (Chrome 155, sin interfaz
+gráfica, controlado por el protocolo de DevTools): se cargó la página, se completaron los campos de
+cada formulario y se dispararon los envíos y clics reales. Los casos 2 y 3 se ejecutaron el
+19/10/2026; los casos 4 y 5, el 20/10/2026. Se anota lo observado en cada paso, coincidente o no con
+lo esperado (`AGENTS.md` §9.3).
 
 ### Caso 2 — ISBN existente y luego ISBN nuevo
 
@@ -135,9 +137,41 @@ la tarea estaba desactualizada, no es un defecto del código.
 **Desviación observada (misma que el caso 2):** el selector de clientes de la vista Ventas no está
 vacío: pasó de 4 a 5 opciones y contiene al cliente recién registrado.
 
+### Caso 4 — Venta sin cliente, cantidades inválidas y libro repetido
+
+Se ejecutaron los cuatro puntos del caso; todos **rechazaron** la operación como se espera:
+
+| Paso | Entrada | Resultado esperado | Resultado observado |
+|---|---|---|---|
+| (a) Sin cliente | Un renglón válido (2 × "Cien años de soledad") y confirmar con el selector de cliente vacío | No se confirma | **No se confirmó.** Mensaje: "Operación rechazada: Debe seleccionar un cliente." El historial siguió con 0 ventas. |
+| (b) Cantidad 0 | Cliente Ana Pérez; libro "Cien años de soledad"; cantidad `0` | No se agrega el renglón | **Rechazado.** Mensaje: "Operación rechazada: La cantidad debe ser un número entero mayor que cero." La tabla siguió con 0 filas. |
+| (b) Cantidad negativa | Igual al anterior con cantidad `-3` | No se agrega el renglón | **Rechazado.** Mismo mensaje; 0 filas. |
+| (b) Cantidad decimal | Igual al anterior con cantidad `1.5` | No se agrega el renglón | **Rechazado.** Mismo mensaje; 0 filas. |
+| (c) Libro repetido | Agregar 2 × "Cien años de soledad" (aceptado) y luego 1 × el mismo libro | No se crea otro renglón; se informa el duplicado | **Rechazado.** Mensaje: 'Operación rechazada: El libro "Cien años de soledad" ya tiene un renglón en esta venta; modificá su cantidad en la tabla.' La tabla siguió con 1 fila. |
+| (d) Sin renglones | Cliente Ana Pérez, 0 renglones, botón "Confirmar venta" | No se confirma | **No se confirmó.** Mensaje: "Operación rechazada: La venta debe tener al menos un renglón." El historial siguió con 0 ventas. |
+
+Se verificó además el botón **"Quitar renglón"**: al quitar el único renglón la tabla quedó en 0
+filas y el total en `$ 0.00`.
+
+### Caso 5 — Venta válida: dos unidades a 1500 y una a 2000
+
+| Paso | Entrada | Resultado esperado | Resultado observado |
+|---|---|---|---|
+| (a) Composición | Cliente Ana Pérez; 2 × "Cien años de soledad" ($ 1500.00) y 1 × "Poemas de la soledad" ($ 2000.00) | Subtotales 3000.00 y 2000.00; total 5000.00 | **Coincide.** Subtotales `$ 3000.00` y `$ 2000.00`; total de la tabla `$ 5000.00`. |
+| (b) Edición de cantidad | Cambiar el primer renglón a 3 en el campo de la fila, y volver a 2 | Total recalculado en vivo | **Coincide.** Con 3 el total pasó a `$ 6500.00`; al volver a 2, `$ 5000.00`. El foco no se perdió al editar. |
+| (c) Confirmación | Botón "Confirmar venta" | Mensaje de éxito; venta en el historial; formulario limpio | **Coincide.** Mensaje: 'Operación correcta: la venta "venta-1" se confirmó por $ 5000.00 y quedó registrada en el historial.' Historial con 1 fila (`venta-1 \| 20/10/2026, 03:47:39 \| Ana Pérez \| $ 5000.00 \| Ver detalle`); la tabla de renglones quedó en 0 filas y el total en `$ 0.00`. |
+| (d) Detalle | Botón "Ver detalle" de la venta | Renglones con precio histórico y total conservados | **Coincide.** El `<details>` se abrió con resumen "Detalle de la venta venta-1 — Ana Pérez — 20/10/2026, 03:47:39" y filas: "Cien años de soledad \| 2 \| $ 1500.00 \| $ 3000.00" y "Poemas de la soledad \| 1 \| $ 2000.00 \| $ 2000.00"; total `$ 5000.00`. |
+
+**Comprobación adicional de inmutabilidad (en memoria):** sobre la misma sesión, se modificó con la
+consola `LibrereriaDatos.libros[0].precio = 9999` y se volvió a abrir el detalle de `venta-1`: el
+precio unitario del primer renglón siguió en `$ 1500.00`, con sus subtotales y total sin cambios.
+*Nota de honestidad:* esto prueba la copia del precio en memoria; el **caso 6** de la §10 exige
+alterar el catálogo guardado en `localStorage` y recargar, por lo que queda pendiente hasta el
+Ejercicio 6.
+
 **Notas:**
 
 - Los registros creados viven solo en memoria: al recargar la página vuelven los datos sembrados,
   porque `localStorage` es pendiente del Ejercicio 6.
-- Los casos 1, 4, 5, 6, 7 y 8 **no se registran en esta actualización**; los casos 4, 5, 6 y 7
-  dependen además de los Ejercicios 5 y 6. Ninguno se da por aprobado (`AGENTS.md` §9.3).
+- Los casos 1, 6, 7 y 8 **no se registran en esta actualización**; el caso 6 depende además del
+  Ejercicio 6. Ninguno se da por aprobado (`AGENTS.md` §9.3).

@@ -158,6 +158,8 @@ body {
 }
 .tabla thead th { background: var(--color-fondo-mensaje-vacio); font-weight: 600; }
 .tabla__total { font-weight: 700; }
+/* Input de cantidad dentro de una celda de la tabla de renglones. */
+.tabla__cantidad { width: 5rem; padding: 0.4rem 0.5rem; }
 
 /* ============ CATÁLOGO ============ */
 .catalogo {

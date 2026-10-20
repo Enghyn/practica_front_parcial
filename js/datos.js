@@ -84,12 +84,17 @@
     }
   ];
 
+  // Ventas confirmadas (Ejercicio 5): cada una copia el precio al renglón
+  // al momento de confirmarse; el historial nunca relee el catálogo.
+  var ventas = [];
+
   // Único global del change: los changes de Ej. 4/5 reutilizan este objeto.
   window.LibreriaDatos = {
     editoriales: editoriales,
     generos: generos,
     autores: autores,
     clientes: clientes,
-    libros: libros
+    libros: libros,
+    ventas: ventas
   };
 })();

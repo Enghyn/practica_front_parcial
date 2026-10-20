@@ -28,10 +28,10 @@
 
   <p class="aviso-maqueta" id="aviso-etapa" role="note">
     <strong>Estado real de la implementación.</strong>
-    El <strong>Ejercicio 3 (datos locales, catálogo renderizado y filtro por título)</strong> y el
-    <strong>Ejercicio 4 (altas de libros y clientes con validaciones)</strong> están operativos.
-    Siguen pendientes la <strong>venta simulada con su historial (Ejercicio 5)</strong> y la
-    <strong>persistencia con localStorage (Ejercicio 6)</strong>.
+    El <strong>Ejercicio 3 (datos locales, catálogo renderizado y filtro por título)</strong>, el
+    <strong>Ejercicio 4 (altas de libros y clientes con validaciones)</strong> y el
+    <strong>Ejercicio 5 (venta simulada con historial inmutable)</strong> están operativos.
+    Queda pendiente la <strong>persistencia con localStorage (Ejercicio 6)</strong>.
   </p>
 
   <main class="contenido">
@@ -41,7 +41,7 @@
         <strong>Este proyecto necesita JavaScript.</strong>
         Los listados del catálogo, los formularios con comportamiento y sus validaciones se generan
         con JavaScript: sin él solo se ve la estructura de las cinco vistas.
-        La venta, el historial y la persistencia de datos todavía son pendientes.
+        La persistencia de datos en localStorage todavía es pendiente.
       </p>
     </noscript>
 
@@ -227,7 +227,9 @@
     <section id="ventas" class="vista" aria-labelledby="titulo-ventas">
       <h2 id="titulo-ventas" class="vista__titulo">Ventas</h2>
       <p class="vista__descripcion">
-        Composición de una venta con cliente, renglones y resumen. Estructura preparada; la venta todavía no funciona.
+        Composición de una venta con cliente, renglones y resumen: cantidades enteras mayores que cero,
+        sin libros repetidos dentro de la misma venta, subtotales y total con dos decimales, y precio
+        unitario copiado al historial al confirmar.
       </p>
 
       <form class="formulario" id="formulario-venta" novalidate>
@@ -268,14 +270,15 @@
                 <th scope="col">Cantidad</th>
                 <th scope="col">Precio unitario</th>
                 <th scope="col">Subtotal</th>
+                <th scope="col">Acciones</th>
               </tr>
             </thead>
             <!-- ENGANCHE ETAPA 2: cuerpo.replaceChildren(...) con una fila por renglón; subtotal = cantidad × precio. -->
             <tbody id="cuerpo-renglones"></tbody>
             <tfoot>
               <tr>
-                <th scope="row" colspan="3">Total de la venta</th>
-                <td class="tabla__total" id="total-venta">$ 0,00</td>
+                <th scope="row" colspan="4">Total de la venta</th>
+                <td class="tabla__total" id="total-venta">$ 0.00</td>
               </tr>
             </tfoot>
           </table>
@@ -294,9 +297,9 @@
         <div class="mensaje mensaje--exito" id="mensaje-exito-venta" hidden>
           <p class="mensaje__texto">Operación correcta: la venta se confirmó y quedó registrada en el historial.</p>
         </div>
-        <div class="mensaje mensaje--error" id="mensaje-error-venta" hidden>
-          <p class="mensaje__texto">Operación rechazada: falta elegir el cliente, la venta no tiene renglones o hay cantidades inválidas. En la etapa 2 se informará el motivo exacto.</p>
-        </div>
+          <div class="mensaje mensaje--error" id="mensaje-error-venta" hidden>
+            <p class="mensaje__texto">Operación rechazada: falta elegir el cliente, la venta no tiene renglones o hay cantidades inválidas. El motivo específico se informa a continuación.</p>
+          </div>
       </form>
     </section>
 
@@ -304,7 +307,9 @@
     <section id="historial" class="vista" aria-labelledby="titulo-historial">
       <h2 id="titulo-historial" class="vista__titulo">Historial de ventas</h2>
       <p class="vista__descripcion">
-        Listado de ventas confirmadas y consulta del detalle de cada una. Estructura preparada; el historial todavía no funciona.
+        Listado de ventas confirmadas y consulta del detalle de cada una. El precio unitario de cada
+        renglón queda copiado al confirmar: el detalle conserva los valores de la venta aunque
+        después cambie el precio del catálogo.
       </p>
 
       <div class="tarjeta">
@@ -349,14 +354,14 @@
             <tfoot>
               <tr>
                 <th scope="row" colspan="3">Total de la venta</th>
-                <td class="tabla__total" id="detalle-venta-total">$ 0,00</td>
+                <td class="tabla__total" id="detalle-venta-total">$ 0.00</td>
               </tr>
             </tfoot>
           </table>
         </div>
         <p class="detalle-venta__nota">
-          En la etapa 2 el precio unitario queda copiado en el renglón al confirmar la venta, de modo que
-          cambiar después el precio del catálogo no altera este detalle.
+          El precio unitario queda copiado en cada renglón al confirmar la venta, de modo que cambiar
+          después el precio del catálogo no altera este detalle.
         </p>
       </details>
     </section>
@@ -364,10 +369,11 @@
   </main>
 
   <footer class="pie">
-    <p class="pie__texto">Librería Aurora — TPI de Programación III. Frontend en HTML, CSS y JavaScript nativos: catálogo con filtro y altas de libros y clientes operativos; venta, historial y persistencia, pendientes.</p>
+    <p class="pie__texto">Librería Aurora — TPI de Programación III. Frontend en HTML, CSS y JavaScript nativos: catálogo con filtro, altas de libros y clientes, venta simulada e historial operativos; persistencia con localStorage, pendiente.</p>
   </footer>
   <script src="js/datos.js"></script>
   <script src="js/catalogo.js"></script>
   <script src="js/altas.js"></script>
+  <script src="js/ventas.js"></script>
 </body>
 </html>
