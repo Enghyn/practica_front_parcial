@@ -71,6 +71,10 @@ body {
   gap: 2rem;
   align-items: start;
 }
+/* Los hijos de la rejilla pueden encogerse por debajo del ancho mínimo de la
+   tabla: así la tabla se desplaza dentro de su propio contenedor y la página
+   no gana desplazamiento horizontal a 320 px. */
+.rejilla-dos-columnas > * { min-width: 0; }
 
 /* ============ TARJETAS ============ */
 .tarjeta {
@@ -208,7 +212,10 @@ body {
   .cabecera { flex-direction: column; align-items: flex-start; }
   .catalogo { grid-template-columns: 1fr; }
   .formulario__acciones--fila { flex-direction: column; align-items: stretch; }
-  .campo--en-linea { min-width: auto; }
+  /* En columna los hijos toman el ancho del contenedor para que ningún control
+     (por ejemplo el selector de libros) desborde la página a 320 px. */
+  .formulario__acciones--fila > * { width: 100%; min-width: 0; }
+  .campo--en-linea { min-width: 0; }
 }
 
 @media (max-width: 480px) {

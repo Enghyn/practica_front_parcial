@@ -1,7 +1,11 @@
-// Datos locales iniciales de la Librería Aurora (Ejercicio 3).
-// Solo datos en memoria: sin fetch, sin localStorage (eso es del Ejercicio 6).
+// Datos locales de la Librería Aurora (Ejercicios 3 a 6).
+// Los literales (editoriales, géneros, autores) son fijos en el código porque
+// no se administran desde la interfaz. Los libros, clientes y ventas se
+// siembran una sola vez y se conservan en localStorage (js/persistencia.js).
 (function () {
   'use strict';
+
+  var persistencia = window.LibreriaPersistencia;
 
   // Ids estables tipo cadena para referenciar entre arrays.
   var editoriales = [
@@ -21,13 +25,13 @@
   ];
 
   // Clientes ficticios de ejemplo.
-  var clientes = [
+  var clientesSemilla = [
     { id: 'cli1', nombre: 'Ana Pérez', email: 'ana.perez@ejemplo.com' },
     { id: 'cli2', nombre: 'Bruno Díaz', email: 'bruno.diaz@ejemplo.com' },
     { id: 'cli3', nombre: 'Carla Gómez', email: 'carla.gomez@ejemplo.com' }
   ];
 
-  var libros = [
+  var librosSemilla = [
     {
       id: 'lib1',
       titulo: 'Cien años de soledad',
@@ -86,9 +90,20 @@
 
   // Ventas confirmadas (Ejercicio 5): cada una copia el precio al renglón
   // al momento de confirmarse; el historial nunca relee el catálogo.
-  var ventas = [];
+  var ventasSemilla = [];
 
-  // Único global del change: los changes de Ej. 4/5 reutilizan este objeto.
+  // Copia profunda de la semilla, para no compartir objetos con el código.
+  function clonar(objetos) {
+    return objetos.map(function (objeto) {
+      return JSON.parse(JSON.stringify(objeto));
+    });
+  }
+
+  var clientes = clonar(clientesSemilla);
+  var libros = clonar(librosSemilla);
+  var ventas = clonar(ventasSemilla);
+
+  // Único global del change: los changes de Ej. 4/5/6 reutilizan este objeto.
   window.LibreriaDatos = {
     editoriales: editoriales,
     generos: generos,
@@ -97,4 +112,66 @@
     libros: libros,
     ventas: ventas
   };
+
+  // Reemplaza el contenido del arreglo sin cambiar su identidad, para que
+  // window.LibreriaDatos siga apuntando al mismo array.
+  function reemplazarContenido(destino, origen) {
+    destino.splice(0, destino.length);
+    Array.prototype.push.apply(destino, origen);
+  }
+
+  // Siembra única o restauración, según la bandera de versión.
+  function aplicarPersistencia() {
+    if (!persistencia) return;
+
+    if (!persistencia.estaDisponible()) {
+      persistencia.mostrarAviso(
+        'Aviso: no hay almacenamiento local disponible porque ' + persistencia.motivoFallo() +
+        '. Los datos quedan solo en memoria y se pierden al cerrar la página.'
+      );
+      return;
+    }
+
+    // Bandera ausente o distinta: se vuelve a sembrar y se actualiza.
+    if (persistencia.leerVersion() !== persistencia.VERSION_ACTUAL) {
+      persistencia.escribir();
+      persistencia.escribirVersion();
+      return;
+    }
+
+    // La versión coincide: se restaura entidad por entidad.
+    var entidades = [
+      { etiqueta: 'libros', clave: persistencia.CLAVES.libros, destino: libros },
+      { etiqueta: 'clientes', clave: persistencia.CLAVES.clientes, destino: clientes },
+      { etiqueta: 'ventas', clave: persistencia.CLAVES.ventas, destino: ventas }
+    ];
+    var problemas = [];
+
+    entidades.forEach(function (entidad) {
+      var resultado = persistencia.estado(entidad.clave);
+
+      if (resultado.estado === 'ok') {
+        reemplazarContenido(entidad.destino, resultado.valor);
+        return;
+      }
+
+      // Esa entidad conserva su semilla y se avisa por texto.
+      if (resultado.estado === 'invalido') {
+        problemas.push('el contenido guardado de ' + entidad.etiqueta + ' no se pudo interpretar');
+      } else {
+        problemas.push('no había datos guardados de ' + entidad.etiqueta);
+      }
+    });
+
+    if (problemas.length > 0) {
+      // Se reescribe el estado para dejar sanas las claves afectadas.
+      persistencia.escribir();
+      persistencia.mostrarAviso(
+        'Aviso: ' + problemas.join('; ') + '. Se cargaron los datos de ejemplo de esas secciones ' +
+        'y la aplicación sigue operativa.'
+      );
+    }
+  }
+
+  aplicarPersistencia();
 })();

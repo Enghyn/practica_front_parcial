@@ -85,14 +85,14 @@ El documento SHALL señalar con comentarios HTML en el código fuente cada punto
 
 #### Scenario: Aviso visible sin JavaScript
 - **WHEN** el usuario abre el proyecto con JavaScript deshabilitado
-- **THEN** ve un aviso de texto que explica que los listados y las operaciones requieren JavaScript y cuáles vistas son todavía pendientes
+- **THEN** ve un aviso de texto que explica que los listados y las operaciones requieren JavaScript, que sin él solo se ve la estructura de las cinco vistas, y que ninguna operación del alcance del TPI queda pendiente
 
 ### Requirement: Honestidad sobre lo que todavía no funciona
-El documento SHALL indicar de forma visible y textual el estado real de implementación: qué operaciones están disponibles y cuáles todavía son pendientes, sin afirmar en falso que ninguna funciona y sin depender de estilos, colores ni distintivos gráficos para comunicarlo.
+El documento SHALL NOT afirmar en falso que una operación funciona y SHALL NOT contener un cartel que anuncie el estado de la implementación cuando no queda ninguna operación pendiente dentro del alcance del TPI; el estado real de la entrega se documenta en el README.
 
-#### Scenario: Aviso de etapa en el documento
+#### Scenario: Sin cartel de estado
 - **WHEN** el usuario abre la aplicación
-- **THEN** encuentra un aviso de texto que identifica correctamente las operaciones disponibles (catálogo con filtro y altas de libros y clientes) y las que siguen pendientes (venta, historial y persistencia)
+- **THEN** no encuentra ningún aviso que enumere las operaciones disponibles, porque dentro del alcance del TPI no queda ninguna pendiente
 
 #### Scenario: Sin promesas obsoletas en los textos estáticos
 - **WHEN** se leen las descripciones de las vistas y los textos por defecto de los contenedores de mensaje
@@ -102,12 +102,12 @@ El documento SHALL indicar de forma visible y textual el estado real de implemen
 - **WHEN** se inspecciona el código fuente
 - **THEN** los avisos de pendiente se expresan con texto y comentarios, y no con clases que solo tengan sentido si existe una hoja de estilos
 
-### Requirement: Documento sin estilos, sin scripts y sin datos embebidos
-El documento SHALL NOT referenciar ninguna hoja de estilos, ningún archivo de JavaScript ni ninguna URL `http`/`https`, y SHALL NOT contener datos de libros, clientes ni ventas.
+#### Scenario: Textos de estado coherentes en todo el documento
+- **WHEN** se revisan el bloque `<noscript>` y el pie de página
+- **THEN** ninguno de ellos afirma que la persistencia con `localStorage` esté pendiente, porque ya está implementada
 
-#### Scenario: Sin referencias a CSS ni JavaScript
-- **WHEN** se busca `<link` o `<script` en el documento
-- **THEN** no hay ninguna coincidencia
+### Requirement: Documento sin URLs externas ni datos embebidos
+El documento SHALL NOT referenciar ninguna URL `http`/`https`, y SHALL NOT contener datos de libros, clientes ni ventas escritos en el HTML.
 
 #### Scenario: Sin URLs externas
 - **WHEN** se busca `http://` o `https://` en todos los archivos del proyecto

@@ -347,12 +347,32 @@ Prioridad: pantallas del ejercicio 1 + presentación del ejercicio 2:
 7. Mantener **separación estricta**: `.html` = estructura, `css/` = estilos, `js/` = comportamiento.
 8. Comentar el código en **español**, de forma breve y solo donde la regla no sea obvia.
 9. Si una funcionalidad queda **pendiente**, marcarla explícitamente como pendiente — nunca simular que está completa.
+10. **Nunca** guardar libros, clientes y ventas en una **única clave** de `localStorage`: van en claves separadas (`libreriaAurora:libros`, `libreriaAurora:clientes`, `libreriaAurora:ventas`) más la bandera `libreriaAurora:version`, para que el caso 6 permita alterar solo el catálogo guardado sin tocar las ventas.
+11. **Siempre** pasar por `window.LibreriaPersistencia.escribir()` tras cada mutación (alta de libro, alta de cliente, venta confirmada) y **nunca** leer el precio del catálogo al mostrar el historial.
 
 ---
 
 ## 14. Estado actual del repositorio
 
-- `index.html` — **⚠️ en este momento NO es un archivo HTML válido.** Su contenido es la firma de un archivo comprimido **RAR** (`Rar!…`). Debe reemplazarse por el `index.html` real del proyecto.
+- `index.html` — punto de entrada válido: las **cinco vistas** del Ejercicio 1 en una sola página,
+  con navegación por anclas, `<noscript>`, aviso de estado, aviso de persistencia y pie de página.
+  Los `<script>` se cargan al final del `<body>` en este orden: `js/persistencia.js`,
+  `js/datos.js`, `js/catalogo.js`, `js/altas.js`, `js/ventas.js` (la persistencia va **primero**
+  para que los datos guardados estén restaurados antes del primer render).
+- `css/estilos.css` — identidad visual y layout propios (Flexbox/Grid), sin librerías ni CDN.
+- `js/datos.js` — modelo de datos local, semilla de ejemplo (6 libros, 2 editoriales, 2 géneros,
+  3 autores, 3 clientes) y lógica de siembra única / restauración.
+- `js/persistencia.js` — **Ejercicio 6 implementado**: claves `libreriaAurora:version`,
+  `libreriaAurora:libros`, `libreriaAurora:clientes`, `libreriaAurora:ventas`; bandera de
+  versión `"1"`; lectura validada por clave; escritura tras cada alta y cada venta; aviso por
+  texto si el almacenamiento está bloqueado o si un dato guardado no se puede interpretar.
+- `js/catalogo.js`, `js/altas.js`, `js/ventas.js` — ejercicios 3, 4 y 5 operativos.
+- `README.md` — documentación de cierre: estado real, funcionalidades y pendientes, ubicación de
+  los datos iniciales, claves y estructura del `localStorage`, límites del almacenamiento y los
+  **8 casos manuales de la §10 ejecutados** con su resultado observado.
 - `docs/Repaso Primer Parcial.pdf` — consigna oficial (7 páginas).
 - `AGENTS.md` — este archivo.
-- **Faltan:** carpeta `css/`, carpeta `js/`, carpeta de recursos y `README.md`.
+- `openspec/` — especificación de los cambios (propuesta, diseño, tareas y deltas de spec).
+- **Pendiente:** ninguno dentro del alcance del TPI. El archivado del change de OpenSpec del
+  Ejercicio 6 queda como último paso administrativo.
+

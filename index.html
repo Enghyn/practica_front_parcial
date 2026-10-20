@@ -26,13 +26,7 @@
     </nav>
   </header>
 
-  <p class="aviso-maqueta" id="aviso-etapa" role="note">
-    <strong>Estado real de la implementación.</strong>
-    El <strong>Ejercicio 3 (datos locales, catálogo renderizado y filtro por título)</strong>, el
-    <strong>Ejercicio 4 (altas de libros y clientes con validaciones)</strong> y el
-    <strong>Ejercicio 5 (venta simulada con historial inmutable)</strong> están operativos.
-    Queda pendiente la <strong>persistencia con localStorage (Ejercicio 6)</strong>.
-  </p>
+  <p class="aviso-maqueta" id="aviso-persistencia" role="status" hidden></p>
 
   <main class="contenido">
 
@@ -41,7 +35,8 @@
         <strong>Este proyecto necesita JavaScript.</strong>
         Los listados del catálogo, los formularios con comportamiento y sus validaciones se generan
         con JavaScript: sin él solo se ve la estructura de las cinco vistas.
-        La persistencia de datos en localStorage todavía es pendiente.
+        Con JavaScript, los libros, clientes y ventas se guardan en el almacenamiento local del
+        navegador (localStorage) y se recuperan al volver a abrir la página.
       </p>
     </noscript>
 
@@ -62,7 +57,7 @@
 
       <!-- ENGANCHE ETAPA 2: ocultar estos contenedores al insertar filas y mostrarlos al quitar la última. -->
       <div class="mensaje mensaje--vacio" id="mensaje-catalogo-vacio">
-        <p class="mensaje__texto">Todavía no hay libros en el catálogo. Los registros se cargan en la etapa 2.</p>
+        <p class="mensaje__texto">Todavía no hay libros en el catálogo. Registrá un libro en la vista Libros.</p>
       </div>
 
       <div class="mensaje mensaje--alerta" id="mensaje-sin-resultados">
@@ -369,8 +364,9 @@
   </main>
 
   <footer class="pie">
-    <p class="pie__texto">Librería Aurora — TPI de Programación III. Frontend en HTML, CSS y JavaScript nativos: catálogo con filtro, altas de libros y clientes, venta simulada e historial operativos; persistencia con localStorage, pendiente.</p>
+    <p class="pie__texto">Librería Aurora — TPI de Programación III. Frontend en HTML, CSS y JavaScript nativos: catálogo con filtro, altas de libros y clientes, venta simulada, historial y persistencia con localStorage, todo operativo.</p>
   </footer>
+  <script src="js/persistencia.js"></script>
   <script src="js/datos.js"></script>
   <script src="js/catalogo.js"></script>
   <script src="js/altas.js"></script>

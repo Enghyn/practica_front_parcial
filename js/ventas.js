@@ -259,6 +259,11 @@
     };
 
     datos.ventas.push(venta);
+
+    // Guardar la venta en localStorage (Ejercicio 6). El renglón ya guarda su
+    // copia histórica de precio, así que el historial no relee el catálogo.
+    if (window.LibreriaPersistencia) window.LibreriaPersistencia.escribir();
+
     renderizarHistorial();
 
     // Limpiar el formulario para una nueva venta.

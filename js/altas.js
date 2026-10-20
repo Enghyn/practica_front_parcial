@@ -282,6 +282,9 @@
 
       datos.libros.push(nuevoLibro);
 
+      // Guardar el cambio en localStorage (Ejercicio 6).
+      if (window.LibreriaPersistencia) window.LibreriaPersistencia.escribir();
+
       renderizarTablaLibros();
       poblarSelects();
 
@@ -343,6 +346,9 @@
       };
 
       datos.clientes.push(nuevoCliente);
+
+      // Guardar el cambio en localStorage (Ejercicio 6).
+      if (window.LibreriaPersistencia) window.LibreriaPersistencia.escribir();
 
       renderizarTablaClientes();
       poblarSelects();
