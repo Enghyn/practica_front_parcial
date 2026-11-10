@@ -11,7 +11,7 @@ Este documento registra cómo se publica la aplicación completa: el backend del
 | Repositorio del frontend | `https://github.com/Enghyn/practica_front_parcial`, rama `main` |
 | Servicio backend | `libreria-api` — build path `despliegue/` (repositorio del segundo parcial) |
 | Servicio frontend | `frontend` — build path `frontend/` (este repositorio) |
-| URL pública del frontend | _(se completa al desplegar)_ |
+| URL pública del frontend | <https://front.enzogiaquinta.me/> (HTTPS) |
 | URL pública de la API | ninguna: el backend queda en la red interna |
 | Imagen del frontend | `nginx:1.30-alpine` con `public/` y la plantilla de proxy |
 | Base de datos | PostgreSQL 16 del mismo proyecto; head de Alembic `5f67a857f685` (migración 0002) |
@@ -132,14 +132,17 @@ con `python dev_server.py`, que sirve `public/` y reenvía `/api/*` igual que Ng
 
 ```powershell
 # 1) salud a través del proxy del frontend
-Invoke-RestMethod https://<dominio>/api/health/ready
+Invoke-RestMethod https://front.enzogiaquinta.me/api/health/ready
 
 # 2) catálogo
-Invoke-RestMethod "https://<dominio>/api/libros/?limit=2&offset=0"
+Invoke-RestMethod "https://front.enzogiaquinta.me/api/libros/?limit=2&offset=0"
 
 # 3) el sitio responde por HTTPS
-Invoke-WebRequest https://<dominio>/ -UseBasicParsing | Select-Object StatusCode
+Invoke-WebRequest https://front.enzogiaquinta.me/ -UseBasicParsing | Select-Object StatusCode
 ```
+
+Verificado el 2026-11-10: `/api/health/ready` → 200 `{"status":"ok"}`, catálogo con 6 libros y
+`OPTIONS` del backend con `access-control-allow-origin: *`.
 
 Los casos funcionales G-01 a G-07 están registrados en `evidencia/`.
 
@@ -180,4 +183,5 @@ backend con cookies o tokens.
 |---|---|
 | 2026-11-08 | Backend desplegado en Easypanel (`libreria-api`, build path `despliegue/`). |
 | 2026-11-10 | Frontend integrado a la API, imagen Nginx y `dev_server.py`; CORS en el backend. |
-| _(al desplegar)_ | Servicio `frontend` publicado y verificación G-07. |
+| 2026-11-10 | Backend redesplegado con CORS (OPTIONS 200, `access-control-allow-origin: *`). |
+| 2026-11-10 | Servicio `frontend` publicado en <https://front.enzogiaquinta.me/>; verificación G-07. |

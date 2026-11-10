@@ -10,7 +10,7 @@ Capturas y registros de los casos G-01 a G-07 del enunciado. Todos los datos usa
 | G-04 · Venta | [`G-04.md`](G-04.md) | `G-04-detalle-venta.png` |
 | G-05 · Precio histórico | [`G-05.md`](G-05.md) | `G-05-catalogo-precio-nuevo.png`, `G-05-venta-importes-historicos.png` |
 | G-06 · Rechazos | [`G-06.md`](G-06.md) | — |
-| G-07 · Despliegue | [`G-07.md`](G-07.md) | _(pendiente)_ |
+| G-07 · Despliegue | [`G-07.md`](G-07.md) | `G-07-url-publica-1440.png`, `G-07-url-publica-390.png` |
 
 ## Cómo se generó
 

@@ -30,13 +30,13 @@
 
 ## 4. Publicación en Easypanel
 
-- [ ] 4.1 Publicar el repositorio unificado en GitHub
-- [ ] 4.2 Redesplegar el servicio backend con el cambio de CORS y verificar los logs
-- [ ] 4.3 Crear el servicio `frontend` con build path `/frontend` y `Dockerfile`
-- [ ] 4.4 Configurar `API_UPSTREAM` con el nombre interno del backend y el puerto 8000
-- [ ] 4.5 Asignar dominio HTTPS, protocolo interno HTTP y puerto 80
-- [ ] 4.6 Verificar `/api/health/ready` en 200 desde el dominio público
-- [ ] 4.7 Quitar el dominio público del backend si Easypanel asignó uno
+- [x] 4.1 Publicar el repositorio unificado en GitHub
+- [x] 4.2 Redesplegar el servicio backend con el cambio de CORS y verificar los logs
+- [x] 4.3 Crear el servicio `frontend` con build path `/frontend` y `Dockerfile`
+- [x] 4.4 Configurar `API_UPSTREAM` con el nombre interno del backend y el puerto 8000
+- [x] 4.5 Asignar dominio HTTPS, protocolo interno HTTP y puerto 80
+- [x] 4.6 Verificar `/api/health/ready` en 200 desde el dominio público
+- [x] 4.7 Quitar el dominio público del backend si Easypanel asignó uno
 
 ## 5. Casos G-01 a G-07 y evidencia
 
@@ -45,8 +45,8 @@
 - [x] 5.3 Ejecutar G-04 y verificar el detalle después de recargar
 - [x] 5.4 Ejecutar G-05 y restaurar el precio original
 - [x] 5.5 Ejecutar G-06 y confirmar que el historial queda igual
-- [ ] 5.6 Ejecutar G-07: build, HTTPS, salud y persistencia tras redespliegue
-- [ ] 5.7 Escribir `evidencia/G-01.md` … `G-07.md` con pasos, resultado y datos usados
+- [x] 5.6 Ejecutar G-07: build, HTTPS, salud y persistencia tras redespliegue
+- [x] 5.7 Escribir `evidencia/G-01.md` … `G-07.md` con pasos, resultado y datos usados
 
 ## 6. Documentación y entrega
 

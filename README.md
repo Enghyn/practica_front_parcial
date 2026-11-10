@@ -4,16 +4,21 @@ Aplicación integrada de la librería: frontend en HTML, CSS y JavaScript nativo
 de FastAPI del TP «Librería: catálogo, clientes y ventas con FastAPI y PostgreSQL» (capítulos 1 a 4),
 con los datos persistidos en PostgreSQL y el frontend publicado como imagen Nginx.
 
-- **Frontend público**: _(se completa al desplegar)_
+- **Frontend público**: <https://front.enzogiaquinta.me/>
 - **API**: servicio interno del proyecto de Easypanel; se consume bajo `/api` desde el frontend.
+- **Repositorio**: <https://github.com/Enghyn/practica_front_parcial> (rama `main`).
 - **Repositorio del backend**: el servicio se despliega desde el repositorio del segundo parcial con
   build path `despliegue/`. La copia entregada está en `backend/` y es idéntica.
 
 ## Integrantes
 
-| Nombre | Legajo |
-|---|---|
-| _(completar)_ | _(completar)_ |
+**Grupo Aura**
+
+- Enzo Giaquinta
+- Agustín Contardi
+- Fernando Torrez
+- Ignacio Sánchez
+- Ramiro Salcedo
 
 ## Estructura
 

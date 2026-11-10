@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Librería Aurora">
+  <rect width="64" height="64" rx="12" fill="#8b4513"/>
+  <path d="M18 16h12a6 6 0 0 1 6 6v26a5 5 0 0 0-5-5H18z" fill="#faf8f5"/>
+  <path d="M46 16H34a6 6 0 0 0-6 6v26a5 5 0 0 1 5-5h13z" fill="#e8dccd"/>
+</svg>
