@@ -1,0 +1,9 @@
+{
+  "name": "libreria-aurora-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Frontend nativo de la librería",
+  "scripts": {
+    "test": "node --test tests"
+  }
+}

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Librería Aurora — Catálogo, libros, clientes, ventas e historial</title>
+  <meta name="description" content="Frontend de una librería en HTML, CSS y JavaScript nativos conectado a la API de FastAPI: catálogo con búsqueda y paginación, altas de libros y clientes, venta e historial.">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <a class="saltar-al-contenido" href="#catalogo">Saltar al contenido principal</a>
+
+  <header class="cabecera">
+    <div class="cabecera__marca">
+      <h1 class="cabecera__titulo">Librería Aurora</h1>
+      <p class="cabecera__lema">Catálogo, ventas e historial de una librería</p>
+    </div>
+    <nav class="navegacion" aria-label="Navegación principal entre vistas">
+      <ul class="navegacion__lista">
+        <li><a class="navegacion__enlace" href="#catalogo">Catálogo</a></li>
+        <li><a class="navegacion__enlace" href="#libros">Libros</a></li>
+        <li><a class="navegacion__enlace" href="#clientes">Clientes</a></li>
+        <li><a class="navegacion__enlace" href="#ventas">Ventas</a></li>
+        <li><a class="navegacion__enlace" href="#historial">Historial</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="contenido">
+
+    <noscript>
+      <p class="aviso-maqueta">
+        <strong>Este proyecto necesita JavaScript.</strong>
+        Las vistas consultan la API de la librería y sin JavaScript no se pueden cargar el catálogo,
+        los formularios ni el historial. La API debe estar disponible en <code>/api</code>.
+      </p>
+    </noscript>
+
+    <!-- ============ CATÁLOGO ============ -->
+    <section id="catalogo" class="vista" aria-labelledby="titulo-catalogo">
+      <h2 id="titulo-catalogo" class="vista__titulo">Catálogo de libros</h2>
+
+      <form id="formulario-busqueda" class="formulario formulario--busqueda" novalidate>
+        <div class="campo">
+          <label class="campo__etiqueta" for="busqueda-titulo">Buscar por título</label>
+          <input class="campo__control" type="search" id="busqueda-titulo" name="busqueda"
+                 autocomplete="off" placeholder="Parte del título, sin distinguir mayúsculas">
+        </div>
+        <button class="boton boton--principal" type="submit" id="boton-buscar">Buscar por título</button>
+        <button class="boton boton--secundario" type="reset" id="boton-limpiar-busqueda">Limpiar búsqueda</button>
+      </form>
+
+      <div class="mensaje mensaje--info" id="mensaje-catalogo-cargando" role="status" aria-live="polite" hidden>
+        <p class="mensaje__texto">Cargando catálogo…</p>
+      </div>
+
+      <div class="mensaje mensaje--error" id="mensaje-catalogo-error" role="alert" hidden>
+        <p class="mensaje__texto" id="texto-error-catalogo">No se pudo conectar con el servidor.</p>
+        <p><button class="boton boton--secundario" type="button" id="boton-reintentar-catalogo">Reintentar</button></p>
+      </div>
+
+      <div class="mensaje mensaje--vacio" id="mensaje-catalogo-vacio" hidden>
+        <p class="mensaje__texto">Todavía no hay libros en el catálogo. Registrá un libro en la vista Libros.</p>
+      </div>
+
+      <div class="mensaje mensaje--alerta" id="mensaje-sin-resultados" hidden>
+        <p class="mensaje__texto">No se encontraron libros que coincidan con la búsqueda. Probá con otro título o limpiá la búsqueda.</p>
+      </div>
+
+      <ul class="catalogo" id="lista-catalogo" aria-busy="false" aria-label="Libros del catálogo"></ul>
+
+      <nav class="paginacion" id="paginacion-catalogo" aria-label="Paginación del catálogo" hidden>
+        <button class="boton boton--secundario" type="button" id="boton-pagina-anterior">Página anterior</button>
+        <p class="paginacion__resumen" id="resumen-paginacion" role="status" aria-live="polite"></p>
+        <button class="boton boton--secundario" type="button" id="boton-pagina-siguiente">Página siguiente</button>
+      </nav>
+    </section>
+
+    <!-- ============ LIBROS ============ -->
+    <section id="libros" class="vista" aria-labelledby="titulo-libros">
+      <h2 id="titulo-libros" class="vista__titulo">Libros</h2>
+      <p class="vista__descripcion">
+        Alta de libros contra la API: título, ISBN único, precio mayor que cero, stock inicial,
+        editorial existente, género opcional y al menos una autoría con rol y orden.
+      </p>
+
+      <div class="rejilla-dos-columnas">
+        <form class="formulario" id="formulario-alta-libro" novalidate>
+          <h3 class="formulario__titulo">Registrar un libro</h3>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-titulo">Título</label>
+            <input class="campo__control" type="text" id="libro-titulo" name="titulo" autocomplete="off">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-isbn">ISBN</label>
+            <input class="campo__control" type="text" id="libro-isbn" name="isbn" autocomplete="off">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-precio">Precio</label>
+            <input class="campo__control" type="number" id="libro-precio" name="precio" min="0" step="0.01" inputmode="decimal">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-stock">Stock inicial</label>
+            <input class="campo__control" type="number" id="libro-stock" name="stock" min="0" step="1" inputmode="numeric">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-editorial">Editorial</label>
+            <select class="campo__control" id="libro-editorial" name="editorial">
+              <option value="">Elegí una editorial</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="libro-genero">Género</label>
+            <select class="campo__control" id="libro-genero" name="genero">
+              <option value="">Sin clasificar</option>
+            </select>
+          </div>
+
+          <fieldset class="grupo-autorias">
+            <legend class="formulario__titulo">Autorías</legend>
+            <p class="campo__ayuda">
+              La API no expone un listado de autores: cada identificador se verifica con
+              <code>GET /autores/{id}</code> antes de agregarlo. El rol se limita a autor, coautor,
+              traductor o ilustrador.
+            </p>
+
+            <div class="autorias__controles">
+              <div class="campo campo--en-linea">
+                <label class="campo__etiqueta" for="autor-id">ID de autor</label>
+                <input class="campo__control" type="number" id="autor-id" min="1" step="1" inputmode="numeric">
+              </div>
+              <div class="campo campo--en-linea">
+                <label class="campo__etiqueta" for="autor-rol">Rol</label>
+                <select class="campo__control" id="autor-rol">
+                  <option value="autor">Autor</option>
+                  <option value="coautor">Coautor</option>
+                  <option value="traductor">Traductor</option>
+                  <option value="ilustrador">Ilustrador</option>
+                </select>
+              </div>
+              <div class="campo campo--en-linea">
+                <label class="campo__etiqueta" for="autor-orden">Orden</label>
+                <input class="campo__control" type="number" id="autor-orden" min="1" step="1" value="1" inputmode="numeric">
+              </div>
+              <button class="boton boton--secundario" type="button" id="boton-agregar-autoria">Verificar y agregar</button>
+            </div>
+
+            <div class="mensaje mensaje--error" id="mensaje-error-autoria" role="alert" hidden>
+              <p class="mensaje__texto"></p>
+            </div>
+
+            <div class="tabla-envoltura">
+              <table class="tabla" id="tabla-autorias">
+                <caption class="tabla__leyenda">Autorías del libro que se está registrando</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Autor</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Rol</th>
+                    <th scope="col">Orden</th>
+                    <th scope="col">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpo-autorias"></tbody>
+              </table>
+            </div>
+            <div class="mensaje mensaje--vacio" id="mensaje-autorias-vacio">
+              <p class="mensaje__texto">Todavía no agregaste autorías.</p>
+            </div>
+          </fieldset>
+
+          <div class="formulario__acciones">
+            <button class="boton boton--principal" type="submit" id="boton-agregar-libro">Agregar libro</button>
+          </div>
+
+          <div class="mensaje mensaje--exito" id="mensaje-exito-libro" role="status" aria-live="polite" hidden>
+            <p class="mensaje__texto">Operación correcta: el libro se registró en la API.</p>
+          </div>
+          <div class="mensaje mensaje--error" id="mensaje-error-libro" role="alert" hidden>
+            <p class="mensaje__texto">No se pudo registrar el libro.</p>
+          </div>
+        </form>
+
+        <div class="tarjeta">
+          <h3 class="tarjeta__titulo">Libros de la página actual</h3>
+          <p class="campo__ayuda">Muestra la misma página del catálogo, consultada con <code>GET /libros/</code>.</p>
+          <div class="tabla-envoltura">
+            <table class="tabla" id="tabla-libros">
+              <caption class="tabla__leyenda">Libros registrados en la API</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Título</th>
+                  <th scope="col">ISBN</th>
+                  <th scope="col">Editorial</th>
+                  <th scope="col">Género</th>
+                  <th scope="col">Stock</th>
+                  <th scope="col">Precio</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpo-libros"></tbody>
+            </table>
+          </div>
+          <div class="mensaje mensaje--vacio" id="mensaje-libros-vacio" hidden>
+            <p class="mensaje__texto">Todavía no hay libros registrados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CLIENTES ============ -->
+    <section id="clientes" class="vista" aria-labelledby="titulo-clientes">
+      <h2 id="titulo-clientes" class="vista__titulo">Clientes</h2>
+      <p class="vista__descripcion">
+        Alta de clientes contra la API y consulta individual por identificador. La API de los
+        capítulos 1 a 4 no expone un listado de clientes, así que la tabla muestra los clientes
+        registrados o consultados durante esta sesión.
+      </p>
+
+      <div class="rejilla-dos-columnas">
+        <form class="formulario" id="formulario-alta-cliente" novalidate>
+          <h3 class="formulario__titulo">Registrar un cliente</h3>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="cliente-nombre">Nombre completo</label>
+            <input class="campo__control" type="text" id="cliente-nombre" name="nombre" autocomplete="off">
+          </div>
+
+          <div class="campo">
+            <label class="campo__etiqueta" for="cliente-email">Correo electrónico</label>
+            <input class="campo__control" type="email" id="cliente-email" name="email" autocomplete="off">
+          </div>
+
+          <div class="formulario__acciones">
+            <button class="boton boton--principal" type="submit" id="boton-agregar-cliente">Agregar cliente</button>
+          </div>
+
+          <div class="mensaje mensaje--exito" id="mensaje-exito-cliente" role="status" aria-live="polite" hidden>
+            <p class="mensaje__texto">Operación correcta: el cliente se registró en la API.</p>
+          </div>
+          <div class="mensaje mensaje--error" id="mensaje-error-cliente" role="alert" hidden>
+            <p class="mensaje__texto">No se pudo registrar el cliente.</p>
+          </div>
+        </form>
+
+        <div class="tarjeta">
+          <h3 class="tarjeta__titulo">Buscar un cliente por ID</h3>
+          <p class="campo__ayuda">Se consulta <code>GET /clientes/{id}</code> y el cliente queda disponible para una venta.</p>
+          <div class="formulario__acciones formulario__acciones--fila">
+            <div class="campo campo--en-linea">
+              <label class="campo__etiqueta" for="cliente-buscar-id">Identificador</label>
+              <input class="campo__control" type="number" id="cliente-buscar-id" min="1" step="1" inputmode="numeric">
+            </div>
+            <button class="boton boton--secundario" type="button" id="boton-buscar-cliente">Buscar cliente</button>
+          </div>
+          <div class="mensaje mensaje--error" id="mensaje-error-busqueda-cliente" role="alert" hidden>
+            <p class="mensaje__texto"></p>
+          </div>
+
+          <div class="tabla-envoltura">
+            <table class="tabla" id="tabla-clientes">
+              <caption class="tabla__leyenda">Clientes de esta sesión</caption>
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Nombre completo</th>
+                  <th scope="col">Correo electrónico</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpo-clientes"></tbody>
+            </table>
+          </div>
+          <div class="mensaje mensaje--vacio" id="mensaje-clientes-vacio">
+            <p class="mensaje__texto">Todavía no hay clientes en esta sesión.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VENTAS ============ -->
+    <section id="ventas" class="vista" aria-labelledby="titulo-ventas">
+      <h2 id="titulo-ventas" class="vista__titulo">Ventas</h2>
+      <p class="vista__descripcion">
+        Composición de una venta con cliente verificado, renglones con cantidades enteras mayores que
+        cero y sin libros repetidos. La API calcula el total y conserva el precio unitario de cada
+        renglón al confirmar.
+      </p>
+
+      <form class="formulario" id="formulario-venta" novalidate>
+        <h3 class="formulario__titulo">Datos de la venta</h3>
+
+        <div class="campo">
+          <label class="campo__etiqueta" for="venta-cliente">Cliente</label>
+          <select class="campo__control" id="venta-cliente" name="cliente">
+            <option value="">Elegí un cliente consultado</option>
+          </select>
+          <p class="campo__ayuda">La API no expone un listado de clientes: registrá uno o buscalo por ID en la vista Clientes.</p>
+        </div>
+
+        <div class="formulario__acciones formulario__acciones--fila">
+          <div class="campo campo--en-linea">
+            <label class="campo__etiqueta" for="venta-buscar-libro">Buscar libro por título</label>
+            <input class="campo__control" type="search" id="venta-buscar-libro" autocomplete="off" placeholder="Dejalo vacío para ver los primeros 20">
+          </div>
+        </div>
+
+        <div class="formulario__acciones formulario__acciones--fila">
+          <div class="campo campo--en-linea">
+            <label class="campo__etiqueta" for="venta-libro">Libro</label>
+            <select class="campo__control" id="venta-libro" name="libro">
+              <option value="">Elegí un libro</option>
+            </select>
+          </div>
+
+          <div class="campo campo--en-linea">
+            <label class="campo__etiqueta" for="venta-cantidad">Cantidad</label>
+            <input class="campo__control" type="number" id="venta-cantidad" name="cantidad" min="1" step="1" inputmode="numeric">
+          </div>
+
+          <button class="boton boton--secundario" type="button" id="boton-agregar-renglon">Agregar renglón</button>
+        </div>
+
+        <div class="tabla-envoltura">
+          <table class="tabla" id="tabla-renglones">
+            <caption class="tabla__leyenda">Renglones de la venta en curso</caption>
+            <thead>
+              <tr>
+                <th scope="col">Libro</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Precio unitario</th>
+                <th scope="col">Subtotal</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpo-renglones"></tbody>
+            <tfoot>
+              <tr>
+                <th scope="row" colspan="4">Total de la venta</th>
+                <td class="tabla__total" id="total-venta">$ 0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="mensaje mensaje--vacio" id="mensaje-renglones-vacio">
+          <p class="mensaje__texto">Todavía no agregaste renglones a la venta.</p>
+        </div>
+
+        <div class="formulario__acciones">
+          <button class="boton boton--principal" type="button" id="boton-confirmar-venta">Confirmar venta</button>
+          <span class="estado-envio" id="estado-envio-venta" role="status" aria-live="polite"></span>
+        </div>
+
+        <div class="mensaje mensaje--exito" id="mensaje-exito-venta" role="status" aria-live="polite" hidden>
+          <p class="mensaje__texto">Operación correcta: la venta se confirmó y quedó registrada en el historial.</p>
+        </div>
+        <div class="mensaje mensaje--error" id="mensaje-error-venta" role="alert" hidden>
+          <p class="mensaje__texto">No se pudo confirmar la venta.</p>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ HISTORIAL ============ -->
+    <section id="historial" class="vista" aria-labelledby="titulo-historial">
+      <h2 id="titulo-historial" class="vista__titulo">Historial de ventas</h2>
+      <p class="vista__descripcion">
+        Listado paginado de ventas confirmadas y consulta del detalle. El precio unitario de cada
+        renglón queda registrado en la base al confirmar: el detalle conserva los importes de la
+        venta aunque después cambie el precio del catálogo.
+      </p>
+
+      <div class="tarjeta">
+        <h3 class="tarjeta__titulo">Ventas registradas</h3>
+
+        <div class="mensaje mensaje--error" id="mensaje-error-historial" role="alert" hidden>
+          <p class="mensaje__texto" id="texto-error-historial">No se pudo cargar el historial.</p>
+          <p><button class="boton boton--secundario" type="button" id="boton-reintentar-historial">Reintentar</button></p>
+        </div>
+
+        <div class="tabla-envoltura">
+          <table class="tabla" id="tabla-ventas">
+            <caption class="tabla__leyenda">Ventas registradas</caption>
+            <thead>
+              <tr>
+                <th scope="col">Identificador</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Total</th>
+                <th scope="col">Detalle</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpo-ventas"></tbody>
+          </table>
+        </div>
+        <div class="mensaje mensaje--vacio" id="mensaje-historial-vacio" hidden>
+          <p class="mensaje__texto">Todavía no hay ventas registradas en el historial.</p>
+        </div>
+      </div>
+
+      <nav class="paginacion" id="paginacion-historial" aria-label="Paginación del historial" hidden>
+        <button class="boton boton--secundario" type="button" id="boton-historial-anterior">Página anterior</button>
+        <p class="paginacion__resumen" id="resumen-paginacion-historial" role="status" aria-live="polite"></p>
+        <button class="boton boton--secundario" type="button" id="boton-historial-siguiente">Página siguiente</button>
+      </nav>
+
+      <details class="detalle-venta" id="detalle-venta">
+        <summary class="detalle-venta__resumen" id="detalle-venta-resumen">Detalle de la venta seleccionada</summary>
+        <div class="tabla-envoltura">
+          <table class="tabla" id="tabla-detalle-venta">
+            <caption class="tabla__leyenda">Renglones de la venta seleccionada</caption>
+            <thead>
+              <tr>
+                <th scope="col">Libro</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Precio unitario</th>
+                <th scope="col">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpo-detalle-venta"></tbody>
+            <tfoot>
+              <tr>
+                <th scope="row" colspan="3">Total de la venta</th>
+                <td class="tabla__total" id="detalle-venta-total">$ 0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="detalle-venta__nota">
+          El precio unitario quedó registrado en cada renglón al confirmar la venta, de modo que
+          cambiar después el precio del catálogo no altera este detalle.
+        </p>
+      </details>
+    </section>
+
+  </main>
+
+  <footer class="pie">
+    <p class="pie__texto">Librería Aurora — TPI de Programación III. Frontend en HTML, CSS y JavaScript nativos conectado a la API de FastAPI y PostgreSQL: catálogo con búsqueda y paginación, altas de libros y clientes, venta e historial.</p>
+  </footer>
+
+  <script defer src="js/config.js"></script>
+  <script defer src="js/nucleo.js"></script>
+  <script defer src="js/formato.js"></script>
+  <script defer src="js/api.js"></script>
+  <script defer src="js/estado.js"></script>
+  <script defer src="js/catalogo.js"></script>
+  <script defer src="js/altas.js"></script>
+  <script defer src="js/ventas.js"></script>
+  <script defer src="js/historial.js"></script>
+  <script defer src="js/inicio.js"></script>
+</body>
+</html>
