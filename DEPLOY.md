@@ -8,6 +8,7 @@ Este documento registra cómo se publica la aplicación completa: el backend del
 | Dato | Valor |
 |---|---|
 | Proyecto de Easypanel | `grupo-acgs` |
+| Repositorio del frontend | `https://github.com/Enghyn/practica_front_parcial`, rama `main` |
 | Servicio backend | `libreria-api` — build path `despliegue/` (repositorio del segundo parcial) |
 | Servicio frontend | `frontend` — build path `frontend/` (este repositorio) |
 | URL pública del frontend | _(se completa al desplegar)_ |
@@ -44,7 +45,7 @@ Ya está desplegado. Para esta entrega sólo cambia `main.py`, que suma el middl
 
 ### Frontend (`frontend`)
 
-- **Source**: este repositorio, rama `main`, **build path `frontend/`**.
+- **Source**: este repositorio (`Enghyn/practica_front_parcial`), rama `main`, **build path `frontend/`**.
 - **Builder**: Dockerfile, ruta relativa `Dockerfile`.
 - **Environment**: `API_UPSTREAM=<nombre-interno-del-backend>:8000`.
   El patrón de Easypanel es `<proyecto>_<servicio>`; con el proyecto `grupo-acgs` y el servicio
