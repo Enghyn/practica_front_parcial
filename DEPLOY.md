@@ -11,8 +11,8 @@ Este documento registra cómo se publica la aplicación completa: el backend del
 | Repositorio del frontend | `https://github.com/Enghyn/practica_front_parcial`, rama `main` |
 | Servicio backend | `libreria-api` — build path `despliegue/` (repositorio del segundo parcial) |
 | Servicio frontend | `frontend` — build path `frontend/` (este repositorio) |
-| URL pública del frontend | <https://front.enzogiaquinta.me/> (HTTPS) |
-| URL pública de la API | ninguna: el backend queda en la red interna |
+| URL pública del frontend | <https://libreria.enzogiaquinta.me/> (HTTPS) |
+| URL pública de la API | ninguna: el backend se retiró de la red pública y sólo se consume por `/api` a través del frontend |
 | Imagen del frontend | `nginx:1.30-alpine` con `public/` y la plantilla de proxy |
 | Base de datos | PostgreSQL 16 del mismo proyecto; head de Alembic `5f67a857f685` (migración 0002) |
 | Puerto interno del backend | `8000` |
@@ -132,17 +132,18 @@ con `python dev_server.py`, que sirve `public/` y reenvía `/api/*` igual que Ng
 
 ```powershell
 # 1) salud a través del proxy del frontend
-Invoke-RestMethod https://front.enzogiaquinta.me/api/health/ready
+Invoke-RestMethod https://libreria.enzogiaquinta.me/api/health/ready
 
 # 2) catálogo
-Invoke-RestMethod "https://front.enzogiaquinta.me/api/libros/?limit=2&offset=0"
+Invoke-RestMethod "https://libreria.enzogiaquinta.me/api/libros/?limit=2&offset=0"
 
 # 3) el sitio responde por HTTPS
-Invoke-WebRequest https://front.enzogiaquinta.me/ -UseBasicParsing | Select-Object StatusCode
+Invoke-WebRequest https://libreria.enzogiaquinta.me/ -UseBasicParsing | Select-Object StatusCode
 ```
 
-Verificado el 2026-11-10: `/api/health/ready` → 200 `{"status":"ok"}`, catálogo con 6 libros y
-`OPTIONS` del backend con `access-control-allow-origin: *`.
+Verificado el 2026-11-11: `/api/health/ready` → 200 `{"status":"ok"}`, catálogo con 6 libros y el
+detalle de venta con sus importes históricos. El backend ya no tiene dominio público: `GET /libros/`
+sobre el dominio del frontend responde 404 porque ese dominio sólo publica la web y `/api/`.
 
 Los casos funcionales G-01 a G-07 están registrados en `evidencia/`.
 
@@ -177,6 +178,16 @@ El backend de los capítulos 1 a 4 habilita `CORSMiddleware` con `allow_origins=
 puerto; en producción no interviene porque front y API comparten origen. No debe copiarse a un
 backend con cookies o tokens.
 
+Como el backend ya no tiene dominio público, la comprobación del preflight se hace a través del
+proxy del frontend:
+
+```powershell
+curl.exe -i -X OPTIONS "https://libreria.enzogiaquinta.me/api/libros/" `
+  -H "Origin: https://ejemplo.test" -H "Access-Control-Request-Method: GET"
+# HTTP/1.1 200 OK
+# Access-Control-Allow-Origin: *
+```
+
 ## Registro de cambios
 
 | Fecha | Cambio |
@@ -184,4 +195,5 @@ backend con cookies o tokens.
 | 2026-11-08 | Backend desplegado en Easypanel (`libreria-api`, build path `despliegue/`). |
 | 2026-11-10 | Frontend integrado a la API, imagen Nginx y `dev_server.py`; CORS en el backend. |
 | 2026-11-10 | Backend redesplegado con CORS (OPTIONS 200, `access-control-allow-origin: *`). |
-| 2026-11-10 | Servicio `frontend` publicado en <https://front.enzogiaquinta.me/>; verificación G-07. |
+| 2026-11-10 | Servicio `frontend` publicado; verificación G-07. |
+| 2026-11-11 | El frontend pasa a <https://libreria.enzogiaquinta.me/> y se retira el dominio público del backend; la API queda accesible sólo por `/api` a través del frontend. Sin cambios de código: la URL base es relativa y el proxy usa la red interna. |

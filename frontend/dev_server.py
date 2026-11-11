@@ -9,8 +9,10 @@ Uso:
     python dev_server.py
     python dev_server.py --puerto 8080 --destino http://127.0.0.1:8000
 
-El destino por omisión es la API pública; para trabajar contra un backend local
-pasá ``--destino http://127.0.0.1:8000``.
+El destino por omisión es el prefijo público de la API del frontend desplegado
+(``https://libreria.enzogiaquinta.me/api``), que Nginx reenvía al backend por la
+red interna. Para trabajar contra un backend local pasá
+``--destino http://127.0.0.1:8000``.
 """
 
 from __future__ import annotations
@@ -27,7 +29,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 RAIZ = (Path(__file__).resolve().parent / "public").resolve()
-DESTINO_POR_OMISION = "https://libreria.enzogiaquinta.me"
+DESTINO_POR_OMISION = "https://libreria.enzogiaquinta.me/api"
 TIEMPO_ESPERA = 20
 
 
@@ -178,7 +180,7 @@ def main() -> int:
     analizador.add_argument(
         "--destino",
         default=DESTINO_POR_OMISION,
-        help="URL del backend sin barra final (por omisión %s)" % DESTINO_POR_OMISION,
+        help="URL base de la API sin barra final (por omisión %s)" % DESTINO_POR_OMISION,
     )
     argumentos = analizador.parse_args()
 
